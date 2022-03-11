@@ -1,6 +1,6 @@
 {
-  "name": "react-big-scheduler",
-  "version": "0.2.7",
+  "name": "holiday-react-big-scheduler",
+  "version": "0.2.29",
   "description": "A scheduler and resource planning component built for React and made for modern browsers (IE10+)",
   "keywords": [
     "scheduler",
@@ -32,7 +32,7 @@
     "clean": "rimraf ./lib && mkdir lib",
     "build": "node scripts/build.js",
     "clean:exampledist": "rimraf ./exampledist/static",
-    "build:exampledist": "npm run clean:exampledist && cpy src/css/style.css exampledist/static && cross-env NODE_ENV=production webpack --config ./webpack/webpack.config.js",
+    "build:exampledist": "npm run clean:exampledist && cross-env NODE_ENV=production webpack --config ./webpack/webpack.config.js",
     "example": "webpack-dev-server --config ./webpack/webpack-dev.config.js --hot",
     "analyz": "cross-env NODE_ENV=production npm_config_report=true npm run build",
     "build:dll": "cross-env NODE_ENV=production webpack --config ./webpack/webpack.dll.config.js"
@@ -43,7 +43,9 @@
   "dependencies": {
     "antd": "^3.16.6",
     "cpy": "^3.4.1",
+    "lessc": "^1.0.2",
     "moment": "^2.24.0",
+    "path": "^0.12.7",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dnd": "^7.5.0",
@@ -52,7 +54,12 @@
     "rrule": "^2.6.0"
   },
   "devDependencies": {
-    "babel": "6.23.0",
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.5",
+    "@babel/plugin-proposal-decorators": "^7.17.2",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
@@ -82,7 +89,7 @@
     "url-loader": "^1.1.2",
     "webpack": "^4.30.0",
     "webpack-bundle-analyzer": "^3.3.2",
-    "webpack-cli": "^3.3.1",
+    "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.3.1"
   }
 }

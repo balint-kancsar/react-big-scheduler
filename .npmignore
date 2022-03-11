@@ -1,4 +1,5 @@
-exampledist/static
+exampledist
+example
 node_modules
 .idea
 .git

@@ -4,7 +4,10 @@ const path = require('path')
 //const HtmlWebpackPlugin = require('html-webpack-plugin');
 //const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+console.log(webpack)
+
 const root = path.resolve(__dirname, '..')
+process.stdout.write('ROOOOOT')
 module.exports = {
     mode:'production',
     entry: {
