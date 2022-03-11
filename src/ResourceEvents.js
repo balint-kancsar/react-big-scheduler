@@ -169,26 +169,25 @@ class ResourceEvents extends Component {
         const {headers, events, config, cellUnit, localeMoment} = schedulerData;
         const { leftIndex, rightIndex } = this.state;
         const availableMaxWidth = maxEventWidth(schedulerData, leftIndex, resourceEvents.slotId)
+        if(supportTouch) {
+            document.documentElement.removeEventListener('touchmove', this.doDrag, false);
+            document.documentElement.removeEventListener('touchend', this.stopDrag, false);
+            document.documentElement.removeEventListener('touchcancel', this.cancelDrag, false);
+        } else {
+            document.documentElement.removeEventListener('mousemove', this.doDrag, false);
+            document.documentElement.removeEventListener('mouseup', this.stopDrag, false);
+        }
+        document.onselectstart = null;
+        document.ondragstart = null;
+
+        let startTime = headers[leftIndex]?.time;
+        let endTime = resourceEvents.headerItems[rightIndex - 1]?.end;
+        if(cellUnit !== CellUnits.Hour)
+            endTime = localeMoment(resourceEvents.headerItems[rightIndex - 1]?.start).hour(23).minute(59).second(59).format(DATETIME_FORMAT);
+        let slotId = resourceEvents.slotId;
+        let slotName = resourceEvents.slotName;
 
         if (availableMaxWidth > 0) {
-            if(supportTouch) {
-                document.documentElement.removeEventListener('touchmove', this.doDrag, false);
-                document.documentElement.removeEventListener('touchend', this.stopDrag, false);
-                document.documentElement.removeEventListener('touchcancel', this.cancelDrag, false);
-            } else {
-                document.documentElement.removeEventListener('mousemove', this.doDrag, false);
-                document.documentElement.removeEventListener('mouseup', this.stopDrag, false);
-            }
-            document.onselectstart = null;
-            document.ondragstart = null;
-
-            let startTime = headers[leftIndex].time;
-            let endTime = resourceEvents.headerItems[rightIndex - 1].end;
-            if(cellUnit !== CellUnits.Hour)
-                endTime = localeMoment(resourceEvents.headerItems[rightIndex - 1].start).hour(23).minute(59).second(59).format(DATETIME_FORMAT);
-            let slotId = resourceEvents.slotId;
-            let slotName = resourceEvents.slotName;
-
             this.setState({
                 startX: 0,
                 leftIndex: 0,
@@ -197,42 +196,42 @@ class ResourceEvents extends Component {
                 width: 0,
                 isSelecting: false
             });
+        }
 
-            let hasConflict = false;
-            if(config.checkConflict){
-                let start = localeMoment(startTime),
-                    end = localeMoment(endTime);
+        let hasConflict = false;
+        if(config.checkConflict){
+            let start = localeMoment(startTime),
+                end = localeMoment(endTime);
 
-                events.forEach((e) =>{
-                    if(schedulerData._getEventSlotId(e) === slotId) {
-                        let eStart = localeMoment(e.start),
-                            eEnd = localeMoment(e.end);
-                        if((start >= eStart && start < eEnd) || (end > eStart && end <= eEnd) || (eStart >= start && eStart < end) || (eEnd > start && eEnd <= end))
-                            hasConflict = true;
-                    }
-                });
-            }
-
-            if(hasConflict) {
-                const {conflictOccurred} = this.props;
-                if(conflictOccurred != undefined){
-                    conflictOccurred(schedulerData, 'New', {
-                        id: undefined,
-                        start: startTime,
-                        end: endTime,
-                        slotId: slotId,
-                        slotName: slotName,
-                        title: undefined,
-                    }, DnDTypes.EVENT, slotId, slotName, startTime, endTime);
+            events.forEach((e) =>{
+                if(schedulerData._getEventSlotId(e) === slotId) {
+                    let eStart = localeMoment(e.start),
+                        eEnd = localeMoment(e.end);
+                    if((start >= eStart && start < eEnd) || (end > eStart && end <= eEnd) || (eStart >= start && eStart < end) || (eEnd > start && eEnd <= end))
+                        hasConflict = true;
                 }
-                else {
-                    console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
-                }
+            });
+        }
+
+        if(hasConflict) {
+            const {conflictOccurred} = this.props;
+            if(conflictOccurred != undefined){
+                conflictOccurred(schedulerData, 'New', {
+                    id: undefined,
+                    start: startTime,
+                    end: endTime,
+                    slotId: slotId,
+                    slotName: slotName,
+                    title: undefined,
+                }, DnDTypes.EVENT, slotId, slotName, startTime, endTime);
             }
             else {
-                if(newEvent != undefined)
-                    newEvent(schedulerData, slotId, slotName, startTime, endTime);
+                console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
             }
+        }
+        else {
+            if(newEvent != undefined)
+                newEvent(schedulerData, slotId, slotName, startTime, endTime);
         }
     }
 
