@@ -144,7 +144,7 @@ class ResourceEvents extends Component {
         let leftIndex = Math.floor(Math.min(startX, currentX)/cellWidth);
         leftIndex = leftIndex < 0 ? 0 : leftIndex;
         const availableMaxWidth = maxEventWidth(schedulerData, leftIndex, resourceEvents.slotId)
-        currentX = Math.max(startX, currentX) - Math.min(startX, currentX) > availableMaxWidth ? startX + availableMaxWidth : currentX; 
+        currentX = availableMaxWidth === 40 ?  leftIndex*cellWidth + availableMaxWidth : Math.max(startX, currentX) - Math.min(startX, currentX) > availableMaxWidth ? startX + availableMaxWidth : currentX; 
         let left = leftIndex*cellWidth;
         let rightIndex = Math.ceil(Math.max(startX, currentX)/cellWidth);
 
@@ -338,7 +338,7 @@ class ResourceEvents extends Component {
 
         return (
             <tr>
-                <td style={{width: rowWidth}}>
+                <td style={{width: rowWidth, borderTop: resourceEvents.groupOnly ? '1px solid #091e421a' : 'none' }}>
                     {
                         connectDropTarget(
                             <div ref={this.eventContainerRef} className="event-container" style={{height: resourceEvents.rowHeight}}>

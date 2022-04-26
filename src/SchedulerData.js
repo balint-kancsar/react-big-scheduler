@@ -342,7 +342,7 @@ export default class SchedulerData {
         let height = 0;
         this.renderData.forEach((item) => {
             if(item.render)
-                height += item.rowHeight;
+                height += item.rowHeight + 2;
         });
         return height;
     }

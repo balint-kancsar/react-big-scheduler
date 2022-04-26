@@ -66,7 +66,7 @@ class ResourceView extends Component {
             if(item.groupOnly) {
                 tdStyle = {
                     ...tdStyle,
-                    backgroundColor: schedulerData.config.groupOnlySlotColor
+                    borderTop: "1px solid rgba(9, 30, 66, 0.1)"
                 };
             }
 

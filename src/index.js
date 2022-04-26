@@ -72,7 +72,7 @@ class Scheduler extends Component {
         this.state = {
             visible: false,
             dndContext: dndContext,
-            contentHeight: schedulerData.getSchedulerContentDesiredHeight(),
+            contentHeight: schedulerData.getSchedulerContentDesiredHeight() + 1,
             contentScrollbarHeight: 17,
             contentScrollbarWidth: 17,
             resourceScrollbarHeight: 17,
@@ -137,24 +137,10 @@ class Scheduler extends Component {
         this.resolveScrollbarSize();
 
         const { schedulerData } = this.props;
-        const { localeMoment, behaviors } = schedulerData;
-        if(schedulerData.getScrollToSpecialMoment() && !!behaviors.getScrollSpecialMomentFunc){
-            if(!!this.schedulerContent && this.schedulerContent.scrollWidth > this.schedulerContent.clientWidth){
-                let start = localeMoment(schedulerData.startDate).startOf('day'),
-                    end = localeMoment(schedulerData.endDate).endOf('day'),
-                    specialMoment = behaviors.getScrollSpecialMomentFunc(schedulerData, start, end);
-                if(specialMoment>= start && specialMoment <= end){
-                    let index = 0;
-                    schedulerData.headers.forEach((item) => {
-                        let header = localeMoment(item.time);
-                        if(specialMoment >= header)
-                            index ++;
-                    })
-                    this.schedulerContent.scrollLeft = (index - 1) * schedulerData.getContentCellWidth();
-
-                    schedulerData.setScrollToSpecialMoment(false);
-                }
-            }
+        const { localeMoment, behaviors, shouldGoToToday } = schedulerData;
+        if(shouldGoToToday) {
+            this.schedulerContent.scrollLeft = schedulerData.getContentCellWidth()
+            schedulerData.shouldGoToToday = false
         }
     }
 
@@ -253,7 +239,7 @@ class Scheduler extends Component {
                                 </div>
                             </div>
                             <div style={schedulerContentStyle} ref={this.schedulerContentRef} onMouseOver={this.onSchedulerContentMouseOver} onMouseOut={this.onSchedulerContentMouseOut} onScroll={this.onSchedulerContentScroll} >
-                                <div style={{width: schedulerWidth, height: contentHeight}}>
+                                <div style={{width: schedulerWidth, height: contentHeight + 1}}>
                                     <div className="scheduler-content">
                                         <table className="scheduler-content-table" >
                                             <tbody>
@@ -280,7 +266,7 @@ class Scheduler extends Component {
             schedulerHeader = (
                 <Row type="flex" align="middle" justify="space-between" style={{marginBottom: '24px'}}>
                     {leftCustomHeader}
-                    <Col>
+                    <Col style={{ flex: 1 }} sx={{ flex: 1 }}>
                         <div className='header2-text'>
                             <Icon type="left" style={{marginRight: "8px"}} className="icon-nav"
                                     onClick={this.goBack}/>
@@ -330,7 +316,7 @@ class Scheduler extends Component {
             contentScrollbarWidth = 17, 
             resourceScrollbarHeight = 17,
             resourceScrollbarWidth = 17,
-            contentHeight = schedulerData.getSchedulerContentDesiredHeight();
+            contentHeight = schedulerData.getSchedulerContentDesiredHeight() + 1;
         if (!!this.schedulerContent) {
             contentScrollbarHeight = this.schedulerContent.offsetHeight - this.schedulerContent.clientHeight;
             contentScrollbarWidth = this.schedulerContent.offsetWidth - this.schedulerContent.clientWidth;
